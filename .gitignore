@@ -2,6 +2,7 @@
 .vscode
 work_dirs/
 /datasets/
+third_party/mmdetection/data
 
 # OS X
 .DS_Store
