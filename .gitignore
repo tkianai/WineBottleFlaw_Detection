@@ -1,7 +1,6 @@
 # Custom
 .vscode
 work_dirs/
-third_party/
 /datasets/
 
 # OS X

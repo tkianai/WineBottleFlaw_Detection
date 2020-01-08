@@ -8,7 +8,7 @@ def parse_args():
 
     parser = argparse.ArgumentParser(description='Make submit style prediction from other framework')
     parser.add_argument('--data', type=str, help='detection results')
-    parser.add_argument('--mdoe', type=str, defeault='mmdet', help='detection results from which framework [mmdet, detectron2, self]')
+    parser.add_argument('--mode', type=str, default='mmdet', help='detection results from which framework [mmdet, maskrcnn, self]')
     parser.add_argument('--test', type=str, default='./datasets/chongqing1_round1_testA_20191223/test_annotations.json', help='test annotation file')
     parser.add_argument('--save', type=str, default='./submit.json', help='save path')
 
@@ -35,7 +35,7 @@ def main(args):
         }
         submit_data['images'].append(_s_item)
 
-    if args.mode == 'mmdet':
+    if args.mode == 'mmdet' or args.mode == 'maskrcnn':
         submit_data['annotations'] = results
     else:
         raise ValueError("Do not support mode [{}]".format(args.mode))
