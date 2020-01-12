@@ -1,0 +1,33 @@
+MODEL:
+  META_ARCHITECTURE: "GeneralizedRCNN"
+  WEIGHT: "./work_dirs/pretrained/FCOS_syncbn_bs32_c128_MNV2_FPN_1x_trim.pth"
+  RPN_ONLY: True
+  FCOS_ON: True
+  BACKBONE:
+    CONV_BODY: "MNV2-FPN-RETINANET"
+    FREEZE_CONV_BODY_AT: 0
+  RESNETS:
+    BACKBONE_OUT_CHANNELS: 128
+  RETINANET:
+    USE_C5: False # FCOS uses P5 instead of C5
+  USE_SYNCBN: True
+  FCOS:
+    NUM_CLASSES: 11  # the number of classes including background
+DATASETS:
+  TRAIN: ("coco_bottlewine_train", )
+  TEST: ("coco_bottlewine_test",)
+INPUT:
+  MIN_SIZE_RANGE_TRAIN: (640, 800)
+  MAX_SIZE_TRAIN: 1333
+  MIN_SIZE_TEST: 800
+  MAX_SIZE_TEST: 1333
+DATALOADER:
+  SIZE_DIVISIBILITY: 32
+SOLVER:
+  BASE_LR: 0.01
+  WEIGHT_DECAY: 0.0001
+  STEPS: (4000, 7500)
+  MAX_ITER: 9000
+  IMS_PER_BATCH: 32
+  WARMUP_METHOD: "constant"
+OUTPUT_DIR: "./work_dirs/bottlewine/fcos_syncbn_bs32_c128_ms_MNV2_FPN_1x"

@@ -1,0 +1,60 @@
+MODEL:
+  META_ARCHITECTURE: "GeneralizedRCNN"
+  WEIGHT: "./work_dirs/pretrained/FCOS_imprv_dcnv2_X_101_64x4d_FPN_2x_trim.pth"
+  RPN_ONLY: True
+  FCOS_ON: True
+  BACKBONE:
+    CONV_BODY: "R-101-FPN-RETINANET"
+  RESNETS:
+    STRIDE_IN_1X1: False
+    BACKBONE_OUT_CHANNELS: 256
+    NUM_GROUPS: 64
+    WIDTH_PER_GROUP: 4
+    STAGE_WITH_DCN: (False, False, True, True)
+    WITH_MODULATED_DCN: True
+    DEFORMABLE_GROUPS: 1
+  RETINANET:
+    USE_C5: False # FCOS uses P5 instead of C5
+    NUM_CLASSES: 11
+  FCOS:
+    # normalizing the regression targets with FPN strides
+    NORM_REG_TARGETS: True
+    # positioning centerness on the regress branch.
+    # Please refer to https://github.com/tianzhi0549/FCOS/issues/89#issuecomment-516877042
+    CENTERNESS_ON_REG: True
+    # using center sampling and GIoU.
+    # Please refer to https://github.com/yqyao/FCOS_PLUS
+    CENTER_SAMPLING_RADIUS: 1.5
+    IOU_LOSS_TYPE: "giou"
+    # we only use dcn in the last layer of towers
+    USE_DCN_IN_TOWER: True
+    NUM_CLASSES: 11  # the number of classes including background
+DATASETS:
+  TRAIN: ("coco_bottlewine_train", )
+  TEST: ("coco_bottlewine_test",)
+INPUT:
+  MIN_SIZE_RANGE_TRAIN: (492, 1476)
+  MAX_SIZE_TRAIN: 2000
+  MIN_SIZE_TEST: 1476
+  MAX_SIZE_TEST: 2000
+DATALOADER:
+  NUM_WORKERS: 8
+  SIZE_DIVISIBILITY: 32
+SOLVER:
+  BASE_LR: 0.01
+  WEIGHT_DECAY: 0.0001
+  # coco is 30 times larger than bottlewine
+  STEPS: (4000, 7500)
+  MAX_ITER: 9000
+
+  IMS_PER_BATCH: 8
+  WARMUP_METHOD: "constant"
+TEST:
+  IMS_PER_BATCH: 8
+  BBOX_AUG:
+    ENABLED: False
+    H_FLIP: True
+    SCALES: (400, 500, 600, 700, 900, 1000, 1100, 1200)
+    MAX_SIZE: 2000
+    SCALE_H_FLIP: True
+OUTPUT_DIR: "./work_dirs/bottlewine/fcos_imprv_dcnv2_X_101_64x4d_FPN_2x_bottle"
